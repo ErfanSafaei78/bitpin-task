@@ -4,13 +4,15 @@ import { FetchStatus } from "../types";
 interface FetchGuardProps {
   children: ReactElement;
   fetchStatus: FetchStatus;
-  refetch: () => void;
+  refetch?: () => void;
+  errorMessage?: string;
 }
 
 export const FetchGuard = ({
   children,
   fetchStatus,
   refetch,
+  errorMessage = "بارگذاری اطلاعات با مشکل رو به رو شد!",
 }: FetchGuardProps) => {
   return fetchStatus !== "success" ? (
     <div className="d-flex justify-content-center align-items-center m-4">
@@ -20,10 +22,12 @@ export const FetchGuard = ({
         </span>
       ) : (
         <span className="text-danger">
-          بارگذاری اطلاعات با مشکل رو به رو شد!
-          <span className="btn btn-success mx-2" onClick={refetch}>
-            تلاش مجدد
-          </span>
+          {errorMessage}
+          {refetch && (
+            <span className="btn btn-success mx-2" onClick={refetch}>
+              تلاش مجدد
+            </span>
+          )}
         </span>
       )}
     </div>

@@ -53,6 +53,8 @@ body {
   --bs-nav-tabs-border-color: var(--bs-secondary-color);
   --bs-nav-tabs-link-active-border-color: var(--bs-secondary-color)
     var(--bs-secondary-color) var(--background-color);
+  --bs-nav-tabs-link-hover-border-color: var(--bs-secondary-color)
+    var(--bs-secondary-color) var(--background-color);  
 }
 
 .card {

@@ -26,3 +26,19 @@ export interface Market {
 export interface MarketResponse {
   results: Market[];
 }
+
+export interface ActiveOrder {
+  remain: string;
+  price: string;
+  value: string;
+}
+
+export interface ActiveOrdersResponse {
+  orders: ActiveOrder[];
+}
+
+export interface Match {
+  time: number;
+  price: string;
+  match_amount: string;
+}
