@@ -10,7 +10,7 @@ export const Header = () => {
     >
       <div className="container">
         <a className="navbar-brand fw-bold" href="/">
-          Bitpin Crypto Trading Platform
+          Bitpin Trading Platform
         </a>
         <button
           className={`btn ${
@@ -18,7 +18,7 @@ export const Header = () => {
           }`}
           onClick={toggleTheme}
         >
-          {theme === "light" ? "حالت شب" : "حالت روز"}
+          {theme === "light" ? "Dark Mode" : "Light Mode"}
         </button>
       </div>
     </nav>

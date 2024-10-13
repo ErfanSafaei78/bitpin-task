@@ -16,7 +16,7 @@ export const Swipeable = ({
   onSwipeRight,
   children,
 }: SwipeableProps) => {
-  const MIN_SWIPE_DISTANCE = 10;
+  const MIN_SWIPE_DISTANCE = 50;
 
   // states
   const [startTouch, setStartTouch] = useState<TouchPosition | null>(null);
@@ -59,7 +59,6 @@ export const Swipeable = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      style={{touchAction: "none" }}
     >
       {children}
     </div>

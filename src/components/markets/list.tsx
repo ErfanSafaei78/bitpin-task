@@ -1,7 +1,7 @@
-import { Market } from "../../../types";
+import { Market } from "../../types";
 import { useState } from "react";
 import { MarketCard } from "./Card";
-import { useTheme } from "../../../contexts/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 type MarketListProps = {
   markets: Market[];

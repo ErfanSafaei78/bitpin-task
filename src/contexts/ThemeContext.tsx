@@ -9,6 +9,7 @@ import React, {
 interface ThemeContextType {
   theme: "light" | "dark";
   toggleTheme: () => void;
+  OppositeTheme: "light" | "dark";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -41,7 +42,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        toggleTheme,
+        OppositeTheme: theme === "light" ? "dark" : "light",
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );

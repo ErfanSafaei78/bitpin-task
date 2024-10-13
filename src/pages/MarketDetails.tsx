@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { ActiveOrder, FetchStatus, Match } from "../../types";
-import { getActiveOrders, getMatches } from "../../services";
+import { ActiveOrder, FetchStatus, Match } from "../types";
+import { getActiveOrders, getMatches } from "../services";
 import { useParams } from "react-router-dom";
-import { Tabs } from "../../components/Tabs";
-import { FetchGuard } from "../../components/FetchGuard";
-import { MarketDetailList } from "./components/list";
-import { Swipeable } from "../../components/Swipeable";
+import { Tabs } from "../components/Tabs";
+import { FetchGuard } from "../components/FetchGuard";
+import { MarketDetailList } from "../components/marketDetails/list";
+import { Swipeable } from "../components/Swipeable";
 
 export const MarketDetails = () => {
   const { marketId } = useParams();
@@ -79,11 +79,11 @@ export const MarketDetails = () => {
   const handleSwipe = (direction: "left" | "right") => {
     const tabIndex = tabs.indexOf(activeTab);
     if (direction === "left") {
-      setActiveTab(tabIndex + 1 === tabs.length ? tabs[0] : tabs[tabIndex + 1]);
-    } else {
       setActiveTab(
         tabIndex - 1 < 0 ? tabs[tabs.length - 1] : tabs[tabIndex - 1]
       );
+    } else {
+      setActiveTab(tabIndex + 1 === tabs.length ? tabs[0] : tabs[tabIndex + 1]);
     }
   };
 
@@ -101,17 +101,23 @@ export const MarketDetails = () => {
       onSwipeLeft={() => handleSwipe("left")}
       onSwipeRight={() => handleSwipe("right")}
     >
-      <FetchGuard fetchStatus={fetchStatus} errorMessage="شما آفلاین هستید!">
-        <div>
-          <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
-          <MarketDetailList
-            data={
-              { buy: buyOrders, sell: sellOrders, match: matches }[activeTab]
-            }
-            type={activeTab}
-          />
-        </div>
-      </FetchGuard>
+      <div style={{ height: "100vh" }}>
+        <FetchGuard fetchStatus={fetchStatus} errorMessage="شما آفلاین هستید!">
+          <div>
+            <Tabs
+              tabs={tabs}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+            <MarketDetailList
+              data={
+                { buy: buyOrders, sell: sellOrders, match: matches }[activeTab]
+              }
+              type={activeTab}
+            />
+          </div>
+        </FetchGuard>
+      </div>
     </Swipeable>
   );
 };

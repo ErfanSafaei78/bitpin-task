@@ -1,17 +1,24 @@
 import Decimal from "decimal.js";
-import { Table } from "../../../components/Table";
-import { ActiveOrder, Match } from "../../../types";
-import { formatNumber, formatTime } from "../../../utils";
+import { Table } from "../Table";
+import { ActiveOrder, Match } from "../../types";
+import { formatNumber, formatTime } from "../../utils";
 import { useState } from "react";
-import { useTheme } from "../../../contexts/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface MarketDetailListProps {
   data: Match[] | ActiveOrder[];
   type: "match" | "buy" | "sell";
 }
 
+function isMatchList(
+  type: "match" | "buy" | "sell",
+  data: Match[] | ActiveOrder[]
+): data is Match[] {
+  return type === "match";
+}
+
 export function MarketDetailList({ data, type }: MarketDetailListProps) {
-  const { theme } = useTheme();
+  const { OppositeTheme } = useTheme();
 
   // states
   const [percentage, setPercentage] = useState(0);
@@ -23,17 +30,22 @@ export function MarketDetailList({ data, type }: MarketDetailListProps) {
 
   // handlers
   const getTotal = (column: keyof ActiveOrder) => {
-    return Decimal.sum(
-      ...(data as ActiveOrder[]).map((order) => new Decimal(order[column]))
-    );
+    if (!data.length || isMatchList(type, data)) {
+      return new Decimal(0);
+    }
+    return Decimal.sum(...data.map((order) => new Decimal(order[column])));
   };
 
   const calculateOutput = () => {
+    if (!data.length || isMatchList(type, data)) {
+      return;
+    }
+
     const userPercentage = new Decimal(percentage);
 
     const totalRemain = getTotal("remain");
     const totalPriceInRemain = Decimal.sum(
-      ...(data as ActiveOrder[]).map((order) =>
+      ...data.map((order) =>
         new Decimal(order.price).times(new Decimal(order.remain))
       )
     );
@@ -65,19 +77,20 @@ export function MarketDetailList({ data, type }: MarketDetailListProps) {
   };
 
   const tableFooter = (columns: (keyof ActiveOrder)[], data: ActiveOrder[]) => (
-    <tfoot className={`table-${theme === "light" ? "dark" : "light"}`}>
+    <tfoot className={`table-${OppositeTheme}`}>
       <tr>
-        {columns.map((column, index) => (
-          <td key={index} dir="ltr">
-            {column === "price"
-              ? formatNumber(
-                  getTotal("price")
-                    .dividedBy(new Decimal(data.length))
-                    .toNumber()
-                ) + ' (.avg)'
-              : formatNumber(getTotal(column).toNumber())}
-          </td>
-        ))}
+        {data.length &&
+          columns.map((column, index) => (
+            <td key={index}>
+              {column === "price"
+                ? formatNumber(
+                    getTotal("price")
+                      .dividedBy(new Decimal(data.length))
+                      .toNumber()
+                  ) + " (.avg)"
+                : formatNumber(getTotal(column).toNumber())}
+            </td>
+          ))}
       </tr>
     </tfoot>
   );
@@ -93,11 +106,11 @@ export function MarketDetailList({ data, type }: MarketDetailListProps) {
   };
 
   return (
-    <div className="p-4">
-      {type === "match" ? (
+    <div>
+      {isMatchList(type, data) ? (
         <Table
           columns={["time", "price", "match_amount"]}
-          data={(data as Match[]).map((match) => ({
+          data={data.map((match) => ({
             ...match,
             time: formatTime(match.time),
           }))}
@@ -106,34 +119,34 @@ export function MarketDetailList({ data, type }: MarketDetailListProps) {
         <>
           <Table
             columns={["remain", "price", "value"]}
-            data={data as ActiveOrder[]}
+            data={data}
             footer={tableFooter}
           />
-          <div className="mt-4 card">
+          <div className={`card border-${OppositeTheme} mt-4`}>
             <div className="card-body">
               <h3 className="card-title">Percentage Order</h3>
-              <div className="input-group mb-3 w-50">
-                <div className="input-group-append">
-                  <button
-                    className={`btn btn-outline-${
-                      theme === "light" ? "dark" : "light"
-                    }`}
-                    type="button"
-                    onClick={calculateOutput}
-                  >
-                    Calculate
-                  </button>
+              <div className="col col-md-6">
+                <div className="input-group mb-3">
+                  <div className="input-group-append">
+                    <button
+                      className={`btn btn-outline-${OppositeTheme}`}
+                      type="button"
+                      onClick={calculateOutput}
+                    >
+                      Calculate
+                    </button>
+                  </div>
+                  <input
+                    type="number"
+                    className={`form-control border-${OppositeTheme} mb-3 ms-3 rounded`}
+                    min="0"
+                    max="100"
+                    value={percentage}
+                    onChange={(e) =>
+                      handleInputChange(parseInt(e.target.value))
+                    }
+                  />
                 </div>
-                <input
-                  type="number"
-                  className={`form-control border-${
-                    theme === "light" ? "dark" : "light"
-                  } mb-3 mx-3 rounded`}
-                  min="0"
-                  max="100"
-                  value={percentage}
-                  onChange={(e) => handleInputChange(parseInt(e.target.value))}
-                />
               </div>
               <div className="row d-flex justify-content-center text-center">
                 <div className="col-md-3">

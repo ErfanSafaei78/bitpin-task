@@ -1,9 +1,12 @@
-import "./App.scss";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Markets } from "./pages/markets";
-import { MarketDetails } from "./pages/marketDetails";
-import { Header } from "./components/Header";
+
+import { Markets } from "./pages/Markets";
+import { MarketDetails } from "./pages/MarketDetails";
+
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { Header } from "./components/Header";
+
+import "./App.scss";
 
 const routes = createBrowserRouter([
   {
@@ -20,7 +23,7 @@ function App() {
   return (
     <ThemeProvider>
       <Header />
-      <div className="w-full">
+      <div className="w-100 p-4">
         <RouterProvider router={routes} />
       </div>
     </ThemeProvider>

@@ -13,12 +13,11 @@ export function Table<T extends string>({
   data,
   footer,
 }: TableProps<T>) {
-
-  const {theme} = useTheme();
+  const { theme, OppositeTheme } = useTheme();
 
   return (
     <table className="table table-striped table-hover text-center">
-      <thead className={`table-${theme === 'light' ? 'dark' : 'light'}`}>
+      <thead className={`table-${OppositeTheme}`}>
         <tr>
           {columns.map((column, index) => (
             <th key={index}>{column}</th>
@@ -26,7 +25,7 @@ export function Table<T extends string>({
         </tr>
       </thead>
       <tbody className={`table-${theme}`}>
-        {data.map((row, rowIndex) => (
+        {data.length ? data.map((row, rowIndex) => (
           <tr key={rowIndex}>
             {columns.map((column, columnIndex) => (
               <td key={columnIndex}>
@@ -34,9 +33,13 @@ export function Table<T extends string>({
               </td>
             ))}
           </tr>
-        ))}
+        )) : (
+          <tr>
+            <td colSpan={columns.length}> NO DATA </td>
+          </tr>
+        )}
       </tbody>
-      {footer ? footer(columns, data) : ""}
+      {data.length && footer ? footer(columns, data) : ""}
     </table>
   );
 }

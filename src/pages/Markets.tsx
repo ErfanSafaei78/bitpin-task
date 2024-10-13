@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { FetchStatus, Market } from "../../types";
-import { Tabs } from "../../components/Tabs";
-import { getMarketList } from "../../services";
-import { MarketList } from "./components/list";
-import { FetchGuard } from "../../components/FetchGuard";
-import { Swipeable } from "../../components/Swipeable";
+import { FetchStatus, Market } from "../types";
+import { Tabs } from "../components/Tabs";
+import { getMarketList } from "../services";
+import { MarketList } from "../components/markets/list";
+import { FetchGuard } from "../components/FetchGuard";
+import { Swipeable } from "../components/Swipeable";
 
 export const Markets = () => {
   const tabs = ["IRT", "USDT"] as const;
@@ -56,7 +56,7 @@ export const Markets = () => {
       <FetchGuard fetchStatus={fetchStatus} refetch={fetchMarkets}>
         <div className="container mt-4 markets">
           <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
-          <div className="row">
+          <div className="row d-flex justify-content-center">
             <MarketList
               markets={activeTab === "IRT" ? irtMarkets : usdtMarkets}
             />
