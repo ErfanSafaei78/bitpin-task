@@ -4,6 +4,7 @@ import { Tabs } from "../../components/Tabs";
 import { getMarketList } from "../../services";
 import { MarketList } from "./components/list";
 import { FetchGuard } from "../../components/FetchGuard";
+import { Swipeable } from "../../components/Swipeable";
 
 export const Markets = () => {
   const tabs = ["IRT", "USDT"] as const;
@@ -36,16 +37,32 @@ export const Markets = () => {
     fetchMarkets();
   }, []);
 
+  const handleSwipe = (direction: "left" | "right") => {
+    const tabIndex = tabs.indexOf(activeTab);
+    if (direction === "left") {
+      setActiveTab(
+        tabIndex - 1 < 0 ? tabs[tabs.length - 1] : tabs[tabIndex - 1]
+      );
+    } else {
+      setActiveTab(tabIndex + 1 === tabs.length ? tabs[0] : tabs[tabIndex + 1]);
+    }
+  };
+
   return (
-    <FetchGuard fetchStatus={fetchStatus} refetch={fetchMarkets}>
-      <div className="container mt-4 markets">
-        <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
-        <div className="row">
-          <MarketList
-            markets={activeTab === "IRT" ? irtMarkets : usdtMarkets}
-          />
+    <Swipeable
+      onSwipeLeft={() => handleSwipe("left")}
+      onSwipeRight={() => handleSwipe("right")}
+    >
+      <FetchGuard fetchStatus={fetchStatus} refetch={fetchMarkets}>
+        <div className="container mt-4 markets">
+          <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+          <div className="row">
+            <MarketList
+              markets={activeTab === "IRT" ? irtMarkets : usdtMarkets}
+            />
+          </div>
         </div>
-      </div>
-    </FetchGuard>
+      </FetchGuard>
+    </Swipeable>
   );
 };

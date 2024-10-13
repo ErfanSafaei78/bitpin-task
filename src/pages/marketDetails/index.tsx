@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { Tabs } from "../../components/Tabs";
 import { FetchGuard } from "../../components/FetchGuard";
 import { MarketDetailList } from "./components/list";
+import { Swipeable } from "../../components/Swipeable";
 
 export const MarketDetails = () => {
   const { marketId } = useParams();
@@ -75,6 +76,17 @@ export const MarketDetails = () => {
     }
   };
 
+  const handleSwipe = (direction: "left" | "right") => {
+    const tabIndex = tabs.indexOf(activeTab);
+    if (direction === "left") {
+      setActiveTab(tabIndex + 1 === tabs.length ? tabs[0] : tabs[tabIndex + 1]);
+    } else {
+      setActiveTab(
+        tabIndex - 1 < 0 ? tabs[tabs.length - 1] : tabs[tabIndex - 1]
+      );
+    }
+  };
+
   // watchers
   useEffect(() => {
     fetchAll();
@@ -85,14 +97,21 @@ export const MarketDetails = () => {
   }, [activeTab]);
 
   return (
-    <FetchGuard fetchStatus={fetchStatus} errorMessage="شما آفلاین هستید!">
-      <div>
-        <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
-        <MarketDetailList
-          data={{ buy: buyOrders, sell: sellOrders, match: matches }[activeTab]}
-          type={activeTab}
-        />
-      </div>
-    </FetchGuard>
+    <Swipeable
+      onSwipeLeft={() => handleSwipe("left")}
+      onSwipeRight={() => handleSwipe("right")}
+    >
+      <FetchGuard fetchStatus={fetchStatus} errorMessage="شما آفلاین هستید!">
+        <div>
+          <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+          <MarketDetailList
+            data={
+              { buy: buyOrders, sell: sellOrders, match: matches }[activeTab]
+            }
+            type={activeTab}
+          />
+        </div>
+      </FetchGuard>
+    </Swipeable>
   );
 };
